@@ -5,7 +5,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/gmallard/stompngo/senv"
+	"github.com/sergey-sotnikov/stompngo/senv"
 )
 
 func init() {

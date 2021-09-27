@@ -27,7 +27,7 @@ package main
 import (
 	"fmt"
 	//
-	"github.com/gmallard/stompngo"
+	"github.com/sergey-sotnikov/stompngo"
 )
 
 func main() {

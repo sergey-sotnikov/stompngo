@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 	//
-	"github.com/gmallard/stompngo/senv"
+	"github.com/sergey-sotnikov/stompngo/senv"
 )
 
 /*

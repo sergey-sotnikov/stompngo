@@ -25,7 +25,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/gmallard/stompngo/senv"
+	"github.com/sergey-sotnikov/stompngo/senv"
 )
 
 /*
