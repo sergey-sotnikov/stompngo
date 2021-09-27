@@ -53,11 +53,20 @@ readLoop:
 			}
 			break readLoop
 		}
-
+		logLock.Lock()
+		if c.logger != nil {
+			c.logx("RDR_CHECKPOINT_1")
+		}
+		logLock.Unlock()
 		if f.Command == "" {
 			continue readLoop
 		}
 
+		logLock.Lock()
+		if c.logger != nil {
+			c.logx("RDR_CHECKPOINT_2")
+		}
+		logLock.Unlock()
 		m := Message(f)
 		c.mets.tfr += 1 // Total frames read
 		// Headers already decoded
@@ -69,12 +78,27 @@ readLoop:
 		switch f.Command {
 		//
 		case MESSAGE:
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_3")
+			}
+			logLock.Unlock()
 			sid, ok := f.Headers.Contains(HK_SUBSCRIPTION)
 			if !ok { // This should *NEVER* happen
 				panic(fmt.Sprintf("stompngo INTERNAL ERROR: command:<%s> headers:<%v>",
 					f.Command, f.Headers))
 			}
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_4")
+			}
+			logLock.Unlock()
 			c.subsLock.RLock()
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_5")
+			}
+			logLock.Unlock()
 			ps, sok := c.subs[sid] // This is a map of pointers .....
 			//
 			if !sok {
@@ -83,16 +107,36 @@ readLoop:
 				c.log("RDR_NOSUB", sid, m.Command, m.Headers)
 				goto csRUnlock
 			}
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_6")
+			}
+			logLock.Unlock()
 			if ps.cs {
 				// The sub can also already be closed under some conditions.
 				// Again, we log that if possible, and continue
 				c.log("RDR_CLSUB", sid, m.Command, m.Headers)
 				goto csRUnlock
 			}
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_7", ps.drav)
+			}
+			logLock.Unlock()
 			// Handle subscription draining
 			switch ps.drav {
 			case false:
+				logLock.Lock()
+				if c.logger != nil {
+					c.logx("RDR_CHECKPOINT_8")
+				}
+				logLock.Unlock()
 				ps.md <- md
+				logLock.Lock()
+				if c.logger != nil {
+					c.logx("RDR_CHECKPOINT_9")
+				}
+				logLock.Unlock()
 			default:
 				ps.drmc++
 				if ps.drmc > ps.dra {
@@ -107,6 +151,11 @@ readLoop:
 				}
 			}
 		csRUnlock:
+			logLock.Lock()
+			if c.logger != nil {
+				c.logx("RDR_CHECKPOINT_10")
+			}
+			logLock.Unlock()
 			c.subsLock.RUnlock()
 		//
 		case ERROR:

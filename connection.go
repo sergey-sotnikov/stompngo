@@ -228,13 +228,16 @@ func (c *Connection) shutdownHeartBeats() {
 func (c *Connection) shutdown() {
 	c.log("SHUTDOWN", "starts")
 	c.shutdownHeartBeats()
+	c.log("SHUTDOWN", "CHECKPOINT_1")
 	// Close all individual subscribe channels
 	// This is a write lock
 	c.subsLock.Lock()
 	for key := range c.subs {
+		c.log("SHUTDOWN", "CHECKPOINT_2", key)
 		close(c.subs[key].md)
 		c.subs[key].cs = true
 	}
+	c.log("SHUTDOWN", "CHECKPOINT_3")
 	c.setConnected(false)
 	c.subsLock.Unlock()
 	c.log("SHUTDOWN", "ends")
